@@ -2,6 +2,7 @@
 
 
 #include "Character/LC_Character_Base.h"
+#include "AbilitySystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
 ALC_Character_Base::ALC_Character_Base()
@@ -25,6 +26,15 @@ void ALC_Character_Base::BeginPlay()
 void ALC_Character_Base::InitAbiltyActorInfo()
 {
 
+}
+
+void ALC_Character_Base::InitVitalAttributes() const
+{
+		check(GetAbilitySystemComponent());
+		check(IsValid(VitalAttributesClass));
+		const FGameplayEffectContextHandle GameplayContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+		const FGameplayEffectSpecHandle EffectSpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(VitalAttributesClass, 1.f, GameplayContextHandle);
+		GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 
 

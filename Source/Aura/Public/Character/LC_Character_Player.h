@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Character/LC_Character_Base.h"
+#include "AbilitySystemComponent.h"
 #include "LC_Character_Player.generated.h"
 
+class UGameplayEffect;
 /**
  * 
  */
@@ -21,4 +23,9 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 	virtual void InitAbiltyActorInfo() override;
+
+protected:
+
+
+
 };
