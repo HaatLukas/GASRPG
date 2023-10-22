@@ -25,6 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbiltyActorInfo();
 	void InitVitalAttributes() const;
+	void InitSecondaryAttributes() const;
 
 	UPROPERTY(EditAnywhere, Category="Weapon")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -36,6 +37,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> VitalAttributesClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> SecondaryAttributesClass;
 
 
 	

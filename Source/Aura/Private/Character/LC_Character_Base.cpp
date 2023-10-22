@@ -37,4 +37,13 @@ void ALC_Character_Base::InitVitalAttributes() const
 		GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 
+void ALC_Character_Base::InitSecondaryAttributes() const
+{
+	check(GetAbilitySystemComponent());
+	check(IsValid(SecondaryAttributesClass));
+	const FGameplayEffectContextHandle GameplayContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	const FGameplayEffectSpecHandle EffectSpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(SecondaryAttributesClass, 1.f, GameplayContextHandle);
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
+}
+
 
