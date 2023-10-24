@@ -26,6 +26,10 @@ public:
 
 protected:
 
+	/** Combat Interface */
+	virtual int32 GetPlayerLevel() override;
+	/** end Combat Interface */
+
 
 
 };

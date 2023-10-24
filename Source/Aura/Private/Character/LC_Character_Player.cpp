@@ -37,7 +37,14 @@ void ALC_Character_Player::InitAbiltyActorInfo()
 
 	InitVitalAttributes();
 	InitSecondaryAttributes();
-	
+	InitAttributes();
+}
+
+int32 ALC_Character_Player::GetPlayerLevel()
+{
+	const ALC_PlayerState* GASPlayerState = GetPlayerState<ALC_PlayerState>();
+	check(GASPlayerState);
+	return GASPlayerState->GetPlayerLevel();
 }
 
 
