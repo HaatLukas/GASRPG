@@ -38,6 +38,7 @@ void ALC_Character_Player::InitAbiltyActorInfo()
 	InitVitalAttributes();
 	InitSecondaryAttributes();
 	InitAttributes();
+	//InitVitalAttributes();
 }
 
 int32 ALC_Character_Player::GetPlayerLevel()
