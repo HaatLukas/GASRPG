@@ -5,17 +5,43 @@
 #include "EnhancedInputSubsystems.h"
 #include "Interface/HoverInterface.h"
 #include "Input/LC_EnhancedInputComponent.h"
+#include "AbilitySystem/LC_AbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Components/SplineComponent.h"
+#include "LC_GameplayTags.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 
 ALC_PlayerController::ALC_PlayerController()
 {
 	bReplicates = true;
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void ALC_PlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
 	CursorTrace();
+	AutoRun();
+}
+
+void ALC_PlayerController::AutoRun()
+{
+	if (bAutoRunning)
+	{
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			FVector SplineLocation = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+			FVector SplineDirection = Spline->FindDirectionClosestToWorldLocation(SplineLocation, ESplineCoordinateSpace::World);
+			ControlledPawn->AddMovementInput(SplineDirection);
+
+			const float DistanceToDistanation = (SplineLocation - CachedDestination).Length();
+			if (DistanceToDistanation < AutoRunAcceptanceRadius)
+			{
+				bAutoRunning = false;
+			}
+		}
+	}
 }
 
 void ALC_PlayerController::BeginPlay()
@@ -37,7 +63,6 @@ void ALC_PlayerController::BeginPlay()
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
 
-	
 }
 
 void ALC_PlayerController::SetupInputComponent()
@@ -70,51 +95,103 @@ void ALC_PlayerController::Move(const FInputActionValue& InputActionValue)
 
 void ALC_PlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = CurrentActor;
 	CurrentActor = Cast<IHoverInterface>(CursorHit.GetActor());
 
-
-	if (LastActor==nullptr && CurrentActor==nullptr)
+	if (LastActor != CurrentActor)
 	{
-
+		if (LastActor) LastActor->UnHighlightActor();
+		if (CurrentActor) CurrentActor->HighlightActor();
 	}
-	if (LastActor == nullptr && CurrentActor)
-	{
-		CurrentActor->HighlightActor();
-	}
-	if (LastActor && CurrentActor==nullptr)
-	{
-		LastActor->UnHighlightActor();
-	}
-	if (LastActor && CurrentActor && CurrentActor==LastActor)
-	{
-		
-	}
-	if (LastActor && CurrentActor && CurrentActor != LastActor)
-	{
-		LastActor->UnHighlightActor();
-		CurrentActor->HighlightActor();
-	}
-
-
-
+	
 }
 
 void ALC_PlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	if (InputTag.MatchesTagExact(FLC_GameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = CurrentActor ? true : false;
+		bAutoRunning = false;
+	}
 }
 
 void ALC_PlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Green, *InputTag.ToString());
+	if (!InputTag.MatchesTagExact(FLC_GameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC() == nullptr) return;
+		GetASC()->AbilityInputTagReleased(InputTag);
+	}
+	else
+	{
+		if (bTargeting)
+		{
+			if (GetASC() == nullptr) return;
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+		else
+		{
+			APawn* ControlledPawn = GetPawn();
+			if (RunningTime <= ShortClickThreshold && ControlledPawn)
+			{
+					if (UNavigationPath* NaviPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+					{
+						Spline->ClearSplinePoints();
+						for (const FVector& VectorPoint : NaviPath->PathPoints)
+						{
+							Spline->AddSplinePoint(VectorPoint,ESplineCoordinateSpace::World);
+						}
+						CachedDestination = NaviPath->PathPoints[NaviPath->PathPoints.Num() - 1];
+						bAutoRunning = true;
+					}
+			}
+			bTargeting = false;
+			RunningTime = 0.f;
+		}
+	}
 }
 
 void ALC_PlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Blue, *InputTag.ToString());
+	if (!InputTag.MatchesTagExact(FLC_GameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC() == nullptr) return;
+		GetASC()->AbilityInputTagHeld(InputTag);
+	}
+	else 
+	{
+		if (bTargeting)
+		{
+			if (GetASC() == nullptr) return;
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		else
+		{
+			RunningTime = GetWorld()->GetDeltaSeconds();
+			if (CursorHit.bBlockingHit)
+			{
+				CachedDestination = CursorHit.ImpactPoint;
+				if (APawn* ControlledPawn = GetPawn())
+				{
+					const FVector MovementVector = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+					ControlledPawn->AddMovementInput(MovementVector);
+				}
+			}
+		}
+	}
 }
+
+ULC_AbilitySystemComponent* ALC_PlayerController::GetASC()
+{
+	if (LC_AbilitySystemComponent == nullptr)
+	{
+		LC_AbilitySystemComponent = Cast<ULC_AbilitySystemComponent>
+			(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return LC_AbilitySystemComponent;
+}
+
+

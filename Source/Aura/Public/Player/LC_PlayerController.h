@@ -11,6 +11,8 @@ class UInputMappingContext;
 class UInputAction;
 class IHoverInterface;
 class ULC_InputDataAsset;
+class ULC_AbilitySystemComponent;
+class USplineComponent;
 /**
  * 
  */
@@ -43,5 +45,23 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<ULC_InputDataAsset> InputDataAsset;
+
+	UPROPERTY()
+	TObjectPtr<ULC_AbilitySystemComponent> LC_AbilitySystemComponent;
+
+	ULC_AbilitySystemComponent* GetASC();
+
+private:
+	FVector CachedDestination = FVector::ZeroVector;
+	bool bAutoRunning = false;
+	bool bTargeting = false;
+	float ShortClickThreshold = 0.5f;
+	float RunningTime = 0.f;
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+	TObjectPtr<USplineComponent> Spline;
+	FHitResult CursorHit;
+
+	void AutoRun();
 
 };

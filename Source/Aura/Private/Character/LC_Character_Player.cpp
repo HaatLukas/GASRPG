@@ -31,8 +31,10 @@ void ALC_Character_Player::InitAbiltyActorInfo()
 
 	if (ALC_PlayerController* PlayerCont = Cast<ALC_PlayerController>(GetController()))
 	{
-		ALC_HUD* GameHUD = Cast<ALC_HUD>(PlayerCont->GetHUD());
-		GameHUD->InitOverlay(PlayerCont, GASPlayerState, AbilitySystemComponent, AttributeSet);
+		if (ALC_HUD* GameHUD = Cast<ALC_HUD>(PlayerCont->GetHUD()))
+		{
+			GameHUD->InitOverlay(PlayerCont, GASPlayerState, AbilitySystemComponent, AttributeSet);
+		}
 	}
 
 	InitVitalAttributes();
