@@ -4,7 +4,7 @@
 #include "Player/LC_PlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "Interface/HoverInterface.h"
-#include "EnhancedInputComponent.h"
+#include "Input/LC_EnhancedInputComponent.h"
 
 ALC_PlayerController::ALC_PlayerController()
 {
@@ -44,9 +44,12 @@ void ALC_PlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	ULC_EnhancedInputComponent* EnhancedInputComponent = CastChecked<ULC_EnhancedInputComponent>(InputComponent);
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALC_PlayerController::Move);
+
+	EnhancedInputComponent->BindAbilityActions(InputDataAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
+
 }
 
 void ALC_PlayerController::Move(const FInputActionValue& InputActionValue)
@@ -99,4 +102,19 @@ void ALC_PlayerController::CursorTrace()
 
 
 
+}
+
+void ALC_PlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+}
+
+void ALC_PlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Green, *InputTag.ToString());
+}
+
+void ALC_PlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Blue, *InputTag.ToString());
 }

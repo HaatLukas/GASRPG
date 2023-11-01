@@ -11,6 +11,7 @@
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
+class UGameplayAbility;
 
 UCLASS(ABSTRACT)
 class AURA_API ALC_Character_Base : public ACharacter, public IAbilitySystemInterface, public ILC_CombatInterface
@@ -43,6 +44,12 @@ protected:
 	TSubclassOf<UGameplayEffect> SecondaryAttributesClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> InitAttributesClass;
+
+	void GiveGameplayAbilities();
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> GameplayAbilitiesArray;
 
 
 	

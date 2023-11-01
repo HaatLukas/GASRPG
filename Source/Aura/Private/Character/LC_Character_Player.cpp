@@ -55,6 +55,7 @@ void ALC_Character_Player::PossessedBy(AController* NewController)
 
 	//Init ability actor info for the server
 	InitAbiltyActorInfo();
+	GiveGameplayAbilities();
 	
 }
 

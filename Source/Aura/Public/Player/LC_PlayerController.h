@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GameplayTagContainer.h"
 #include "LC_PlayerController.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 class IHoverInterface;
-
+class ULC_InputDataAsset;
 /**
  * 
  */
@@ -35,5 +36,12 @@ private:
 
 	IHoverInterface* LastActor;
 	IHoverInterface* CurrentActor;
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<ULC_InputDataAsset> InputDataAsset;
 
 };

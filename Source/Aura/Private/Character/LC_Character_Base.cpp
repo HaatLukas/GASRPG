@@ -4,6 +4,7 @@
 #include "Character/LC_Character_Base.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "AbilitySystem/LC_AbilitySystemComponent.h"
 
 ALC_Character_Base::ALC_Character_Base()
 {
@@ -53,6 +54,14 @@ void ALC_Character_Base::InitAttributes() const
 	const FGameplayEffectContextHandle GameplayContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 	const FGameplayEffectSpecHandle EffectSpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(InitAttributesClass, 1.f, GameplayContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
+}
+
+void ALC_Character_Base::GiveGameplayAbilities()
+{
+	if (!HasAuthority()) return;
+	ULC_AbilitySystemComponent* ASC = CastChecked<ULC_AbilitySystemComponent>(AbilitySystemComponent);
+
+	ASC->AddCharacterAbilities(GameplayAbilitiesArray);
 }
 
 
