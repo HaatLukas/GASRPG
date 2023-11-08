@@ -56,6 +56,12 @@ void ALC_Character_Base::InitAttributes() const
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 
+FVector ALC_Character_Base::GetWeaponTipLocation()
+{
+	check(Weapon);
+	return Weapon->GetSocketLocation(WeaponTipName);
+}
+
 void ALC_Character_Base::GiveGameplayAbilities()
 {
 	if (!HasAuthority()) return;

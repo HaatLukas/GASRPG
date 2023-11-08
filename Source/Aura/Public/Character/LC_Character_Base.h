@@ -33,6 +33,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Weapon")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
+	UPROPERTY(EditAnywhere, Category="Weapon")
+	FName WeaponTipName;
+
+	virtual FVector GetWeaponTipLocation() override;
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY()
