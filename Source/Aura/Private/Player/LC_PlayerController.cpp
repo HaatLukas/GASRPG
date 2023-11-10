@@ -72,7 +72,8 @@ void ALC_PlayerController::SetupInputComponent()
 	ULC_EnhancedInputComponent* EnhancedInputComponent = CastChecked<ULC_EnhancedInputComponent>(InputComponent);
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALC_PlayerController::Move);
-
+	EnhancedInputComponent->BindAction(ShiftAction, ETriggerEvent::Triggered, this, &ALC_PlayerController::ShiftPresssed);
+	EnhancedInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &ALC_PlayerController::ShiftReleased);
 	EnhancedInputComponent->BindAbilityActions(InputDataAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 
 }
@@ -163,13 +164,9 @@ void ALC_PlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	}
 	else 
 	{
-		if (bTargeting)
+		if (!bTargeting && !bShiftPressed)
 		{
-			if (GetASC() == nullptr) return;
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
-		else
-		{
+
 			RunningTime = GetWorld()->GetDeltaSeconds();
 			if (CursorHit.bBlockingHit)
 			{
@@ -180,6 +177,11 @@ void ALC_PlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 					ControlledPawn->AddMovementInput(MovementVector);
 				}
 			}
+		}
+		else
+		{
+			if (GetASC() == nullptr) return;
+			GetASC()->AbilityInputTagHeld(InputTag);
 		}
 	}
 }

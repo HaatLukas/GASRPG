@@ -28,30 +28,45 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 private:
+	
+	void CursorTrace();
+	IHoverInterface* LastActor;
+	IHoverInterface* CurrentActor;
+	UPROPERTY()
+	TObjectPtr<ULC_AbilitySystemComponent> LC_AbilitySystemComponent;
+	ULC_AbilitySystemComponent* GetASC();
+
+	//Input
+	
 	UPROPERTY (EditAnywhere,Category="Input")
 	TObjectPtr<UInputMappingContext> PlayerInputContext;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
 
-	void Move(const struct FInputActionValue& InputActionValue);
-	void CursorTrace();
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<ULC_InputDataAsset> InputDataAsset;
 
-	IHoverInterface* LastActor;
-	IHoverInterface* CurrentActor;
+	bool bShiftPressed = false;
+
+	void ShiftPresssed(){ bShiftPressed=true; }
+	void ShiftReleased(){ bShiftPressed=false; }
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
-	UPROPERTY(EditDefaultsOnly, Category="Input")
-	TObjectPtr<ULC_InputDataAsset> InputDataAsset;
+	
 
-	UPROPERTY()
-	TObjectPtr<ULC_AbilitySystemComponent> LC_AbilitySystemComponent;
+	//Input End
 
-	ULC_AbilitySystemComponent* GetASC();
 
-private:
+	//Movement
+	
+	void AutoRun();
+	void Move(const struct FInputActionValue& InputActionValue);
+	
 	FVector CachedDestination = FVector::ZeroVector;
 	bool bAutoRunning = false;
 	bool bTargeting = false;
@@ -61,7 +76,8 @@ private:
 	float AutoRunAcceptanceRadius = 50.f;
 	TObjectPtr<USplineComponent> Spline;
 	FHitResult CursorHit;
-
-	void AutoRun();
+	
+	//Movement
+	
 
 };

@@ -5,12 +5,15 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "AbilitySystem/LC_AbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ALC_Character_Base::ALC_Character_Base()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), "WeaponSocket");
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+	Weapon->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
 }
 
 UAbilitySystemComponent* ALC_Character_Base::GetAbilitySystemComponent() const
