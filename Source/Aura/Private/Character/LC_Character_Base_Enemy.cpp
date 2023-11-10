@@ -42,6 +42,9 @@ void ALC_Character_Base_Enemy::InitAbiltyActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<ULC_AbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+	InitVitalAttributes();
+	InitSecondaryAttributes();
+	InitAttributes();
 }
 
 int32 ALC_Character_Base_Enemy::GetPlayerLevel()

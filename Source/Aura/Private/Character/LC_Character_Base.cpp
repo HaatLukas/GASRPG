@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "AbilitySystem/LC_AbilitySystemComponent.h"
+#include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
 
 ALC_Character_Base::ALC_Character_Base()
@@ -13,7 +14,10 @@ ALC_Character_Base::ALC_Character_Base()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), "WeaponSocket");
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	Weapon->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile,ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 UAbilitySystemComponent* ALC_Character_Base::GetAbilitySystemComponent() const
@@ -29,7 +33,7 @@ void ALC_Character_Base::BeginPlay()
 
 void ALC_Character_Base::InitAbiltyActorInfo()
 {
-
+	
 }
 
 void ALC_Character_Base::InitVitalAttributes() const
