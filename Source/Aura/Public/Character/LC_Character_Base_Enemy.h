@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "Character/LC_Character_Base.h"
 #include "Interface/HoverInterface.h"
+#include "HUD/WidgetController/LC_OverlayWidgetController.h"
 #include "LC_Character_Base_Enemy.generated.h"
+
+
+
+class UWidgetComponent;
 
 /**
  * 
@@ -21,9 +26,17 @@ public:
 	bool bHighlighted = false;
 	virtual void BeginPlay() override;
 
+	
+	
 	ALC_Character_Base_Enemy();
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHeatlhChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHeatlhChanged;
 
 protected:
 	virtual void InitAbiltyActorInfo() override;
@@ -33,8 +46,7 @@ protected:
 
 	virtual int32 GetPlayerLevel() override;
 
-	
-
-	
+	UPROPERTY(BlueprintReadOnly,VisibleAnywhere)
+	TObjectPtr<UWidgetComponent> EnemyHealthWidget;
 
 };

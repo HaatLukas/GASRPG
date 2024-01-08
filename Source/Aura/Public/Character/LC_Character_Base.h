@@ -35,7 +35,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Weapon")
 	FName WeaponTipName;
-
+	
+	UFUNCTION()
 	virtual FVector GetWeaponTipLocation() override;
 
 	UPROPERTY()

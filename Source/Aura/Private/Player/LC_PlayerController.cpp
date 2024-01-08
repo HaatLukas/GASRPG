@@ -71,7 +71,7 @@ void ALC_PlayerController::SetupInputComponent()
 
 	ULC_EnhancedInputComponent* EnhancedInputComponent = CastChecked<ULC_EnhancedInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALC_PlayerController::Move);
+	//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALC_PlayerController::Move);
 	EnhancedInputComponent->BindAction(ShiftAction, ETriggerEvent::Triggered, this, &ALC_PlayerController::ShiftPresssed);
 	EnhancedInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &ALC_PlayerController::ShiftReleased);
 	EnhancedInputComponent->BindAbilityActions(InputDataAsset, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
