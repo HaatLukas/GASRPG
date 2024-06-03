@@ -9,3 +9,4 @@ Implemented functionalities:
 - Ability setup
 - Projectiles
 - Infinite, periodic effects
+- ...
